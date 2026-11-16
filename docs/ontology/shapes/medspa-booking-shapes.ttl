@@ -1,0 +1,146 @@
+@prefix mb: <https://moxie.example.com/ontology/medspa-booking/domain#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+mb:ServiceOfferingShape a sh:NodeShape ;
+    sh:targetClass mb:ServiceOffering ;
+    sh:property [
+        sh:path mb:offeredBy ;
+        sh:class mb:Medspa ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A service offering must belong to exactly one medspa." ;
+    ] ;
+    sh:property [
+        sh:path mb:priceInCents ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 0 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A service offering must have one nonnegative integer price expressed in cents." ;
+    ] ;
+    sh:property [
+        sh:path mb:durationMinutes ;
+        sh:datatype xsd:integer ;
+        sh:minExclusive 0 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A service offering must have one positive integer duration expressed in minutes." ;
+    ] .
+
+mb:AppointmentShape a sh:NodeShape ;
+    sh:targetClass mb:Appointment ;
+    sh:property [
+        sh:path mb:atMedspa ;
+        sh:class mb:Medspa ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An appointment must be associated with exactly one medspa." ;
+    ] ;
+    sh:property [
+        sh:path mb:startTime ;
+        sh:datatype xsd:dateTime ;
+        sh:pattern ".*(Z|[+-][0-9]{2}:[0-9]{2})$" ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An appointment must have exactly one timezone-aware start time." ;
+    ] ;
+    sh:property [
+        sh:path mb:hasStatus ;
+        sh:class mb:AppointmentStatus ;
+        sh:in ( mb:Scheduled mb:Completed mb:Canceled ) ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An appointment must have exactly one status: scheduled, completed, or canceled." ;
+    ] ;
+    sh:property [
+        sh:path mb:totalDurationMinutes ;
+        sh:datatype xsd:integer ;
+        sh:minExclusive 0 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An appointment must have one positive integer derived total duration in minutes." ;
+    ] ;
+    sh:property [
+        sh:path mb:totalPriceInCents ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 0 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An appointment must have one nonnegative integer derived total price in cents." ;
+    ] ;
+    sh:property [
+        sh:path mb:hasSelection ;
+        sh:class mb:AppointmentServiceSelection ;
+        sh:minCount 1 ;
+        sh:message "An appointment must select at least one service." ;
+    ] ;
+    sh:sparql [
+        sh:message "Every selected service must belong to the appointment's medspa." ;
+        sh:select """
+            PREFIX mb: <https://moxie.example.com/ontology/medspa-booking/domain#>
+            SELECT $this
+            WHERE {
+                $this mb:atMedspa ?medspa ;
+                      mb:hasSelection/mb:selects/mb:offeredBy ?otherMedspa .
+                FILTER (?medspa != ?otherMedspa)
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        sh:message "An appointment must not select the same service more than once." ;
+        sh:select """
+            PREFIX mb: <https://moxie.example.com/ontology/medspa-booking/domain#>
+            SELECT $this
+            WHERE {
+                $this mb:hasSelection ?selectionA, ?selectionB .
+                ?selectionA mb:selects ?offering .
+                ?selectionB mb:selects ?offering .
+                FILTER (?selectionA != ?selectionB)
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        sh:message "An appointment start time must be in the future." ;
+        sh:select """
+            PREFIX mb: <https://moxie.example.com/ontology/medspa-booking/domain#>
+            SELECT $this
+            WHERE {
+                $this mb:startTime ?startTime .
+                FILTER (?startTime <= NOW())
+            }
+        """ ;
+    ] .
+
+mb:AppointmentServiceSelectionShape a sh:NodeShape ;
+    sh:targetClass mb:AppointmentServiceSelection ;
+    sh:property [
+        sh:path mb:selectionForAppointment ;
+        sh:class mb:Appointment ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each service-selection association must belong to exactly one appointment." ;
+    ] ;
+    sh:property [
+        sh:path mb:selects ;
+        sh:class mb:ServiceOffering ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each service-selection association must identify exactly one service offering." ;
+    ] ;
+    sh:property [
+        sh:path mb:bookedPriceInCents ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 0 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each service-selection association must preserve one nonnegative booking-time price in cents." ;
+    ] ;
+    sh:property [
+        sh:path mb:bookedDurationMinutes ;
+        sh:datatype xsd:integer ;
+        sh:minExclusive 0 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each service-selection association must preserve one positive booking-time duration in minutes." ;
+    ] .

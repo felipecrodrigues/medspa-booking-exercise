@@ -1,0 +1,146 @@
+@prefix ev: <https://moxie.example.com/ontology/medspa-booking/evaluation#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ev:RequirementShape a sh:NodeShape ;
+    sh:targetClass ev:Requirement ;
+    sh:property [
+        sh:path ev:requirementStatement ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A requirement must have exactly one traceable statement." ;
+    ] ;
+    sh:property [
+        sh:path ev:sourceReference ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A requirement must identify its source document and section." ;
+    ] .
+
+ev:EndpointContractShape a sh:NodeShape ;
+    sh:targetClass ev:EndpointContract ;
+    sh:property [
+        sh:path ev:httpMethod ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An endpoint contract must identify exactly one HTTP method." ;
+    ] ;
+    sh:property [
+        sh:path ev:httpPath ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An endpoint contract must identify exactly one route path." ;
+    ] .
+
+ev:OpenQuestionShape a sh:NodeShape ;
+    sh:targetClass ev:OpenQuestion ;
+    sh:property [
+        sh:path ev:questionText ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An open question must state the unresolved decision without presuming an answer." ;
+    ] ;
+    sh:property [
+        sh:path ev:decisionState ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An open question must record its current decision state." ;
+    ] .
+
+ev:AgentRunShape a sh:NodeShape ;
+    sh:targetClass ev:AgentRun ;
+    sh:property [
+        sh:path ev:runPhase ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An agent run must identify its phase." ;
+    ] ;
+    sh:property [
+        sh:path ev:performedBy ;
+        sh:class ev:Agent ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An agent run must identify exactly one contributing agent." ;
+    ] .
+
+ev:MetricDefinitionShape a sh:NodeShape ;
+    sh:targetClass ev:MetricDefinition ;
+    sh:property [
+        sh:path ev:metricName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A metric definition must have exactly one stable name." ;
+    ] ;
+    sh:property [
+        sh:path ev:metricVersion ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A metric definition must identify its rubric version." ;
+    ] .
+
+ev:MetricObservationShape a sh:NodeShape ;
+    sh:targetClass ev:MetricObservation ;
+    sh:property [
+        sh:path ev:observesDimension ;
+        sh:class ev:QualityDimension ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A metric observation must identify exactly one quality dimension." ;
+    ] ;
+    sh:property [
+        sh:path ev:aboutAgentRun ;
+        sh:class ev:AgentRun ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A metric observation must identify exactly one agent run." ;
+    ] ;
+    sh:property [
+        sh:path ev:usesMetricDefinition ;
+        sh:class ev:MetricDefinition ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A metric observation must identify exactly one versioned metric definition." ;
+    ] ;
+    sh:property [
+        sh:path ev:evaluatedBy ;
+        sh:class ev:EvaluationRun ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A metric observation must identify exactly one evaluation run." ;
+    ] ;
+    sh:property [
+        sh:path ev:hasEvidence ;
+        sh:class ev:EvidenceArtifact ;
+        sh:minCount 1 ;
+        sh:message "A metric observation must link to the evidence used to produce it." ;
+    ] ;
+    sh:xone (
+        [
+            sh:property [
+                sh:path ev:metricValue ;
+                sh:datatype xsd:integer ;
+                sh:minInclusive 1 ;
+                sh:maxInclusive 5 ;
+                sh:minCount 1 ;
+                sh:maxCount 1 ;
+            ] ;
+        ]
+        [
+            sh:property [
+                sh:path ev:metricUnavailableReason ;
+                sh:datatype xsd:string ;
+                sh:minCount 1 ;
+                sh:maxCount 1 ;
+            ] ;
+        ]
+    ) ;
+    sh:message "A metric observation must have one 1–5 rating or an explicit unavailable reason, but not both." .

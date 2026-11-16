@@ -1,0 +1,210 @@
+@prefix mb: <https://moxie.example.com/ontology/medspa-booking/domain#> .
+@prefix ev: <https://moxie.example.com/ontology/medspa-booking/evaluation#> .
+@prefix core: <https://moxie.example.com/ontology/medspa-booking/core#> .
+@prefix schema: <https://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+<https://moxie.example.com/ontology/medspa-booking/example/medspa/harbor-aesthetics>
+    a mb:Medspa ;
+    mb:medspaName "Harbor Aesthetics" ;
+    mb:addressText "10 Example Avenue, Portland, ME" ;
+    mb:phoneNumber "+1-207-555-0142" ;
+    mb:emailAddress "hello@example.test" ;
+    mb:offersService <https://moxie.example.com/ontology/medspa-booking/example/service/hydrating-facial> .
+
+<https://moxie.example.com/ontology/medspa-booking/example/service/hydrating-facial>
+    a mb:ServiceOffering ;
+    mb:serviceName "Hydrating facial" ;
+    mb:serviceDescription "Illustrative service used to demonstrate the required service fields." ;
+    mb:priceInCents 15000 ;
+    mb:durationMinutes 60 ;
+    mb:offeredBy <https://moxie.example.com/ontology/medspa-booking/example/medspa/harbor-aesthetics> .
+
+<https://moxie.example.com/ontology/medspa-booking/example/appointment/appointment-001>
+    a mb:Appointment ;
+    mb:atMedspa <https://moxie.example.com/ontology/medspa-booking/example/medspa/harbor-aesthetics> ;
+    mb:startTime "2026-12-01T10:00:00-05:00"^^xsd:dateTime ;
+    mb:hasStatus mb:Scheduled ;
+    mb:totalDurationMinutes 60 ;
+    mb:totalPriceInCents 15000 ;
+    mb:hasSelection <https://moxie.example.com/ontology/medspa-booking/example/selection/appointment-001-service-001> .
+
+<https://moxie.example.com/ontology/medspa-booking/example/selection/appointment-001-service-001>
+    a mb:AppointmentServiceSelection ;
+    mb:selectionForAppointment <https://moxie.example.com/ontology/medspa-booking/example/appointment/appointment-001> ;
+    mb:selects <https://moxie.example.com/ontology/medspa-booking/example/service/hydrating-facial> ;
+    mb:bookedPriceInCents 15000 ;
+    mb:bookedDurationMinutes 60 .
+
+<https://moxie.example.com/ontology/medspa-booking/example/exercise>
+    a ev:Exercise ;
+    schema:name "Moxie Backend Take-Home Exercise" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/requirement/services-create>
+    a ev:EndpointContract ;
+    ev:requirementStatement "Create a service for a medspa." ;
+    ev:sourceReference "backend-take-home-exercise.md, API Endpoints / Services" ;
+    ev:appliesTo <https://moxie.example.com/ontology/medspa-booking/example/exercise> ;
+    ev:httpMethod "POST" ;
+    ev:httpPath "/medspas/{medspa_id}/services" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/requirement/services-get>
+    a ev:EndpointContract ;
+    ev:requirementStatement "Get a service by ID." ;
+    ev:sourceReference "backend-take-home-exercise.md, API Endpoints / Services" ;
+    ev:appliesTo <https://moxie.example.com/ontology/medspa-booking/example/exercise> ;
+    ev:httpMethod "GET" ;
+    ev:httpPath "/services/{service_id}" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/requirement/services-list>
+    a ev:EndpointContract ;
+    ev:requirementStatement "List all services for a medspa." ;
+    ev:sourceReference "backend-take-home-exercise.md, API Endpoints / Services" ;
+    ev:appliesTo <https://moxie.example.com/ontology/medspa-booking/example/exercise> ;
+    ev:httpMethod "GET" ;
+    ev:httpPath "/medspas/{medspa_id}/services" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/requirement/services-update>
+    a ev:EndpointContract ;
+    ev:requirementStatement "Update service name, description, price, or duration." ;
+    ev:sourceReference "backend-take-home-exercise.md, API Endpoints / Services" ;
+    ev:appliesTo <https://moxie.example.com/ontology/medspa-booking/example/exercise> ;
+    ev:httpMethod "PATCH" ;
+    ev:httpPath "/services/{service_id}" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/requirement/appointments-create>
+    a ev:EndpointContract ;
+    ev:requirementStatement "Create an appointment for a medspa with service IDs." ;
+    ev:sourceReference "backend-take-home-exercise.md, API Endpoints / Appointments" ;
+    ev:appliesTo <https://moxie.example.com/ontology/medspa-booking/example/exercise> ;
+    ev:httpMethod "POST" ;
+    ev:httpPath "/medspas/{medspa_id}/appointments" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/requirement/appointments-get>
+    a ev:EndpointContract ;
+    ev:requirementStatement "Get an appointment by ID." ;
+    ev:sourceReference "backend-take-home-exercise.md, API Endpoints / Appointments" ;
+    ev:appliesTo <https://moxie.example.com/ontology/medspa-booking/example/exercise> ;
+    ev:httpMethod "GET" ;
+    ev:httpPath "/appointments/{appointment_id}" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/requirement/appointments-update>
+    a ev:EndpointContract ;
+    ev:requirementStatement "Update appointment status." ;
+    ev:sourceReference "backend-take-home-exercise.md, API Endpoints / Appointments" ;
+    ev:appliesTo <https://moxie.example.com/ontology/medspa-booking/example/exercise> ;
+    ev:httpMethod "PATCH" ;
+    ev:httpPath "/appointments/{appointment_id}" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/requirement/appointments-list>
+    a ev:EndpointContract ;
+    ev:requirementStatement "List all appointments." ;
+    ev:sourceReference "backend-take-home-exercise.md, API Endpoints / Appointments" ;
+    ev:appliesTo <https://moxie.example.com/ontology/medspa-booking/example/exercise> ;
+    ev:httpMethod "GET" ;
+    ev:httpPath "/appointments" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/open-question/medspa-endpoints>
+    a ev:OpenQuestion ;
+    ev:questionText "Should the API add medspa-management or delete routes beyond the endpoint table?" ;
+    ev:decisionState "decided" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/decision/medspa-routes>
+    a ev:DecisionRecord ;
+    ev:documentsDecision <https://moxie.example.com/ontology/medspa-booking/example/open-question/medspa-endpoints> ;
+    ev:decisionRationale "Implement only the eight explicitly listed service and appointment routes. Do not add medspa CRUD or delete routes; provide medspa records through seed/demo data or documented database setup." .
+
+<https://moxie.example.com/ontology/medspa-booking/example/open-question/appointment-totals>
+    a ev:OpenQuestion ;
+    ev:questionText "Should appointment totals preserve service values at booking time, or reflect later catalog edits?" ;
+    ev:decisionState "decided" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/decision/appointment-totals>
+    a ev:DecisionRecord ;
+    ev:documentsDecision <https://moxie.example.com/ontology/medspa-booking/example/open-question/appointment-totals> ;
+    ev:decisionRationale "Store booking-time price and duration on each appointment/service selection and derive appointment totals from those snapshots." .
+
+<https://moxie.example.com/ontology/medspa-booking/example/open-question/scope-change-response>
+    a ev:OpenQuestion ;
+    ev:questionText "How should the README address the Scope Change Scenario while distinguishing proposed work from implemented scope?" ;
+    ev:decisionState "decided" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/decision/scope-change-response>
+    a ev:DecisionRecord ;
+    ev:documentsDecision <https://moxie.example.com/ontology/medspa-booking/example/open-question/scope-change-response> ;
+    ev:decisionRationale "Document the authorized response as a design-only proposal covering implementation impact and product/team communication; keep the current API scope unchanged." .
+
+<https://moxie.example.com/ontology/medspa-booking/example/repository>
+    a core:Repository ;
+    schema:name "medspa-booking-exercise" ;
+    core:path "." .
+
+<https://moxie.example.com/ontology/medspa-booking/example/requirement/service-data>
+    a ev:DataModelRequirement ;
+    ev:requirementStatement "A service has an ID, name, description, price in cents, duration in minutes, and medspa foreign key." ;
+    ev:sourceReference "backend-take-home-exercise.md, Data Model / Service" ;
+    ev:appliesTo <https://moxie.example.com/ontology/medspa-booking/example/exercise> .
+
+<https://moxie.example.com/ontology/medspa-booking/example/agent/planning-agent>
+    a ev:Agent ;
+    schema:name "Planning review agent" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/agent-run/planning-review>
+    a ev:AgentRun, prov:Activity ;
+    ev:performedBy <https://moxie.example.com/ontology/medspa-booking/example/agent/planning-agent> ;
+    ev:runPhase "planning" ;
+    ev:modelIdentifier "github-copilot/gpt-6.1-sol" ;
+    ev:hasInputArtifact <https://moxie.example.com/ontology/medspa-booking/example/evidence/planning-input> ;
+    ev:generatedArtifact <https://moxie.example.com/ontology/medspa-booking/example/evidence/planning-output> .
+
+<https://moxie.example.com/ontology/medspa-booking/example/evaluation-run/planning-review>
+    a ev:EvaluationRun, prov:Activity ;
+    ev:evaluatesAgentRun <https://moxie.example.com/ontology/medspa-booking/example/agent-run/planning-review> .
+
+<https://moxie.example.com/ontology/medspa-booking/example/metric-definition/input-quality>
+    a ev:MetricDefinition ;
+    ev:metricName "Input quality" ;
+    ev:metricVersion "1.0" ;
+    rdfs:comment "Illustrative 1-5 rubric dimension; a real observation must cite its input evidence." .
+
+<https://moxie.example.com/ontology/medspa-booking/example/metric-definition/output-quality>
+    a ev:MetricDefinition ;
+    ev:metricName "Output quality" ;
+    ev:metricVersion "1.0" ;
+    rdfs:comment "Illustrative 1-5 rubric dimension; a real observation must cite its output evidence." .
+
+<https://moxie.example.com/ontology/medspa-booking/example/evidence/planning-input>
+    a ev:EvidenceArtifact ;
+    ev:artifactReference "openchamber://session/ses_e1f8e250cffensV9IB3GKaRftZ/message/msg_1e071daf7002vlywDVpjRJdmI6" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/evidence/planning-output>
+    a ev:EvidenceArtifact ;
+    ev:artifactReference "openchamber://session/ses_e1f8e250cffensV9IB3GKaRftZ/message/msg_1e071fcb5001YCi9PH20Pb7eY8" .
+
+<https://moxie.example.com/ontology/medspa-booking/example/metric-observation/input-quality>
+    a ev:MetricObservation ;
+    ev:aboutAgentRun <https://moxie.example.com/ontology/medspa-booking/example/agent-run/planning-review> ;
+    ev:evaluatedBy <https://moxie.example.com/ontology/medspa-booking/example/evaluation-run/planning-review> ;
+    ev:observesDimension ev:InputQuality ;
+    ev:usesMetricDefinition <https://moxie.example.com/ontology/medspa-booking/example/metric-definition/input-quality> ;
+    ev:hasEvidence <https://moxie.example.com/ontology/medspa-booking/example/evidence/planning-input> ;
+    ev:metricValueText "Illustrative schema example only; the planning input has not been scored here." ;
+    ev:metricUnavailableReason "No numeric assessment is asserted in this illustrative ontology instance." .
+
+<https://moxie.example.com/ontology/medspa-booking/example/metric-observation/output-quality>
+    a ev:MetricObservation ;
+    ev:aboutAgentRun <https://moxie.example.com/ontology/medspa-booking/example/agent-run/planning-review> ;
+    ev:evaluatedBy <https://moxie.example.com/ontology/medspa-booking/example/evaluation-run/planning-review> ;
+    ev:observesDimension ev:OutputQuality ;
+    ev:usesMetricDefinition <https://moxie.example.com/ontology/medspa-booking/example/metric-definition/output-quality> ;
+    ev:hasEvidence <https://moxie.example.com/ontology/medspa-booking/example/evidence/planning-output> ;
+    ev:metricValueText "Illustrative schema example only; the planning output has not been scored here." ;
+    ev:metricUnavailableReason "No numeric assessment is asserted in this illustrative ontology instance." .
+
+<https://moxie.example.com/ontology/medspa-booking/example/evaluation-finding/traceability>
+    a ev:EvaluationFinding ;
+    ev:findingAbout <https://moxie.example.com/ontology/medspa-booking/example/requirement/services-create> ;
+    ev:findingText "Illustrative finding structure; no implementation coverage conclusion is asserted." ;
+    ev:hasEvidence <https://moxie.example.com/ontology/medspa-booking/example/evidence/planning-output> .

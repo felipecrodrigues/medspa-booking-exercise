@@ -1,0 +1,173 @@
+@prefix mb: <https://moxie.example.com/ontology/medspa-booking/domain#> .
+@prefix core: <https://moxie.example.com/ontology/medspa-booking/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <https://schema.org/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://moxie.example.com/ontology/medspa-booking/domain>
+    a owl:Ontology ;
+    owl:imports <https://moxie.example.com/ontology/medspa-booking/core> ;
+    rdfs:label "Medspa Booking Domain" ;
+    rdfs:comment "Models the medspa, service, and appointment concepts and relationships stated in the take-home exercise, without deciding unspecified booking policies." ;
+    owl:versionInfo "0.1.0" ;
+    dcterms:created "2026-11-15"^^xsd:date .
+
+mb:Medspa a owl:Class ;
+    rdfs:subClassOf schema:LocalBusiness ;
+    rdfs:label "Medspa" ;
+    rdfs:comment "A medical spa business that owns a service catalog and accepts appointments in the exercise domain." .
+
+mb:ServiceOffering a owl:Class ;
+    rdfs:subClassOf schema:Service ;
+    rdfs:label "Service offering" ;
+    rdfs:comment "A treatment or other bookable service offered by one medspa, with a name, description, price in cents, and duration in minutes." .
+
+mb:Appointment a owl:Class ;
+    rdfs:label "Appointment" ;
+    rdfs:comment "A future, timezone-aware booking at one medspa that selects one or more distinct services from that medspa and has a status and totals derived from booking-time service snapshots." .
+
+mb:AppointmentServiceSelection a owl:Class ;
+    rdfs:label "Appointment service selection" ;
+    rdfs:comment "The association representing one distinct service selected for one appointment; it stores the service price and duration captured when booked so later catalog edits do not change historical totals." .
+
+mb:AppointmentStatus a owl:Class ;
+    rdfs:label "Appointment status" ;
+    rdfs:comment "The status vocabulary specified by the exercise for an appointment." .
+
+mb:Scheduled a mb:AppointmentStatus ;
+    rdfs:label "scheduled" ;
+    rdfs:comment "The appointment is scheduled." .
+
+mb:Completed a mb:AppointmentStatus ;
+    rdfs:label "completed" ;
+    rdfs:comment "The appointment has been completed." .
+
+mb:Canceled a mb:AppointmentStatus ;
+    rdfs:label "canceled" ;
+    rdfs:comment "The appointment has been canceled." .
+
+mb:offersService a owl:ObjectProperty ;
+    rdfs:domain mb:Medspa ;
+    rdfs:range mb:ServiceOffering ;
+    owl:inverseOf mb:offeredBy ;
+    rdfs:label "offers service" ;
+    rdfs:comment "Links a medspa to a service in its catalog. Example: one medspa may offer several services." .
+
+mb:offeredBy a owl:ObjectProperty ;
+    rdfs:domain mb:ServiceOffering ;
+    rdfs:range mb:Medspa ;
+    owl:inverseOf mb:offersService ;
+    rdfs:label "offered by" ;
+    rdfs:comment "Identifies the medspa that owns a service offering. Example: a service belongs to the medspa whose catalog contains it." .
+
+mb:atMedspa a owl:ObjectProperty ;
+    rdfs:domain mb:Appointment ;
+    rdfs:range mb:Medspa ;
+    rdfs:label "at medspa" ;
+    rdfs:comment "Identifies the medspa at which an appointment is booked. Example: an appointment is associated with its parent medspa." .
+
+mb:hasSelection a owl:ObjectProperty ;
+    rdfs:domain mb:Appointment ;
+    rdfs:range mb:AppointmentServiceSelection ;
+    owl:inverseOf mb:selectionForAppointment ;
+    rdfs:label "has service selection" ;
+    rdfs:comment "Connects an appointment to an association record for each selected service." .
+
+mb:selectionForAppointment a owl:ObjectProperty ;
+    rdfs:domain mb:AppointmentServiceSelection ;
+    rdfs:range mb:Appointment ;
+    owl:inverseOf mb:hasSelection ;
+    rdfs:label "selection for appointment" ;
+    rdfs:comment "Identifies the appointment owning a service-selection association." .
+
+mb:selects a owl:ObjectProperty ;
+    rdfs:domain mb:AppointmentServiceSelection ;
+    rdfs:range mb:ServiceOffering ;
+    rdfs:label "selects service" ;
+    rdfs:comment "Identifies the service represented by an appointment-selection association. Example: an appointment may have separate association records for multiple services." .
+
+mb:hasStatus a owl:ObjectProperty ;
+    rdfs:domain mb:Appointment ;
+    rdfs:range mb:AppointmentStatus ;
+    rdfs:label "has status" ;
+    rdfs:comment "Assigns one of the exercise's scheduled, completed, or canceled statuses to an appointment." .
+
+mb:medspaName a owl:DatatypeProperty ;
+    rdfs:domain mb:Medspa ;
+    rdfs:range xsd:string ;
+    rdfs:label "medspa name" ;
+    rdfs:comment "The business name of a medspa." .
+
+mb:addressText a owl:DatatypeProperty ;
+    rdfs:domain mb:Medspa ;
+    rdfs:range xsd:string ;
+    rdfs:label "address text" ;
+    rdfs:comment "The address text recorded for a medspa; address normalization is not specified by the exercise." .
+
+mb:phoneNumber a owl:DatatypeProperty ;
+    rdfs:domain mb:Medspa ;
+    rdfs:range xsd:string ;
+    rdfs:label "phone number" ;
+    rdfs:comment "The contact phone number recorded for a medspa." .
+
+mb:emailAddress a owl:DatatypeProperty ;
+    rdfs:domain mb:Medspa ;
+    rdfs:range xsd:string ;
+    rdfs:label "email address" ;
+    rdfs:comment "The contact email address recorded for a medspa." .
+
+mb:serviceName a owl:DatatypeProperty ;
+    rdfs:domain mb:ServiceOffering ;
+    rdfs:range xsd:string ;
+    rdfs:label "service name" ;
+    rdfs:comment "The display name of a service offering." .
+
+mb:serviceDescription a owl:DatatypeProperty ;
+    rdfs:domain mb:ServiceOffering ;
+    rdfs:range xsd:string ;
+    rdfs:label "service description" ;
+    rdfs:comment "The description of a service offering." .
+
+mb:priceInCents a owl:DatatypeProperty ;
+    rdfs:domain mb:ServiceOffering ;
+    rdfs:range xsd:integer ;
+    rdfs:label "price in cents" ;
+    rdfs:comment "The service price represented as an integer number of cents, as required by the exercise." .
+
+mb:durationMinutes a owl:DatatypeProperty ;
+    rdfs:domain mb:ServiceOffering ;
+    rdfs:range xsd:integer ;
+    rdfs:label "duration in minutes" ;
+    rdfs:comment "The service duration represented as an integer number of minutes, as required by the exercise." .
+
+mb:startTime a owl:DatatypeProperty ;
+    rdfs:domain mb:Appointment ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "start time" ;
+    rdfs:comment "The appointment's start time; approved API inputs include an explicit timezone offset and must be in the future." .
+
+mb:totalDurationMinutes a owl:DatatypeProperty ;
+    rdfs:domain mb:Appointment ;
+    rdfs:range xsd:integer ;
+    rdfs:label "total duration in minutes" ;
+    rdfs:comment "The appointment duration derived by summing the selected services' booking-time duration snapshots." .
+
+mb:totalPriceInCents a owl:DatatypeProperty ;
+    rdfs:domain mb:Appointment ;
+    rdfs:range xsd:integer ;
+    rdfs:label "total price in cents" ;
+    rdfs:comment "The appointment price derived by summing the selected services' booking-time price snapshots." .
+
+mb:bookedPriceInCents a owl:DatatypeProperty ;
+    rdfs:domain mb:AppointmentServiceSelection ;
+    rdfs:range xsd:integer ;
+    rdfs:label "booked price in cents" ;
+    rdfs:comment "The service price captured for this appointment selection at booking time; it remains stable when the catalog price changes." .
+
+mb:bookedDurationMinutes a owl:DatatypeProperty ;
+    rdfs:domain mb:AppointmentServiceSelection ;
+    rdfs:range xsd:integer ;
+    rdfs:label "booked duration in minutes" ;
+    rdfs:comment "The service duration captured for this appointment selection at booking time; it remains stable when the catalog duration changes." .

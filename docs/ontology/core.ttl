@@ -1,0 +1,188 @@
+@prefix core: <https://moxie.example.com/ontology/medspa-booking/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <https://schema.org/> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://moxie.example.com/ontology/medspa-booking/core>
+    a owl:Ontology ;
+    rdfs:label "Medspa Booking Exercise Ontology — Core" ;
+    rdfs:comment "Reusable vocabulary for identifying the exercise repository and its evidence artifacts; domain and evaluation terms are defined in extension modules." ;
+    owl:versionInfo "0.1.0" ;
+    dcterms:created "2026-11-15"^^xsd:date .
+
+core:RepositoryEntity a owl:Class ;
+    rdfs:label "Repository entity" ;
+    rdfs:comment "A logical entity used to describe the repository, its organization, code, tests, or supporting artifacts." .
+
+core:Repository a owl:Class ;
+    rdfs:subClassOf schema:SoftwareSourceCode, doap:Project, core:RepositoryEntity ;
+    rdfs:label "Repository" ;
+    rdfs:comment "The versioned codebase for this exercise. Give it a stable IRI and use commit snapshots to describe version-specific state." .
+
+core:Module a owl:Class ;
+    rdfs:subClassOf core:RepositoryEntity ;
+    rdfs:label "Module" ;
+    rdfs:comment "A logical unit of code organization, such as an application feature or bounded context." .
+
+core:Package a owl:Class ;
+    rdfs:subClassOf core:RepositoryEntity ;
+    rdfs:label "Package" ;
+    rdfs:comment "A distributable software unit used by or produced from the repository." .
+
+core:Directory a owl:Class ;
+    rdfs:subClassOf core:RepositoryEntity ;
+    rdfs:label "Directory" ;
+    rdfs:comment "A directory in the repository, identified by its repository-relative path." .
+
+core:File a owl:Class ;
+    rdfs:subClassOf core:RepositoryEntity ;
+    rdfs:label "File" ;
+    rdfs:comment "A source, test, configuration, specification, or documentation file in the repository." .
+
+core:Symbol a owl:Class ;
+    rdfs:subClassOf core:RepositoryEntity ;
+    rdfs:label "Symbol" ;
+    rdfs:comment "A named code entity. Prefer one of the specific symbol subclasses when its kind is known." .
+
+core:Class a owl:Class ;
+    rdfs:subClassOf core:Symbol ;
+    rdfs:label "Class" ;
+    rdfs:comment "A class definition in source code." .
+
+core:Function a owl:Class ;
+    rdfs:subClassOf core:Symbol ;
+    rdfs:label "Function" ;
+    rdfs:comment "A top-level function definition in source code." .
+
+core:Method a owl:Class ;
+    rdfs:subClassOf core:Symbol ;
+    rdfs:label "Method" ;
+    rdfs:comment "A function definition belonging to a class or interface." .
+
+core:Interface a owl:Class ;
+    rdfs:subClassOf core:Symbol ;
+    rdfs:label "Interface" ;
+    rdfs:comment "An interface, protocol, or trait definition in source code." .
+
+core:Type a owl:Class ;
+    rdfs:subClassOf core:Symbol ;
+    rdfs:label "Type" ;
+    rdfs:comment "A type alias, enumeration, structure, or record not better represented by another symbol class." .
+
+core:Dependency a owl:Class ;
+    rdfs:subClassOf core:RepositoryEntity ;
+    rdfs:label "Dependency" ;
+    rdfs:comment "An external library, runtime, tool, or service on which the repository depends." .
+
+core:Test a owl:Class ;
+    rdfs:subClassOf core:RepositoryEntity ;
+    rdfs:label "Test" ;
+    rdfs:comment "An individual automated test that provides evidence about expected behavior." .
+
+core:TestSuite a owl:Class ;
+    rdfs:subClassOf core:RepositoryEntity ;
+    rdfs:label "Test suite" ;
+    rdfs:comment "A named group of tests, such as a test file or test class." .
+
+core:Commit a owl:Class ;
+    rdfs:subClassOf prov:Entity, core:RepositoryEntity ;
+    rdfs:label "Commit" ;
+    rdfs:comment "A version-control commit that identifies a repository state." .
+
+core:CommitSnapshot a owl:Class ;
+    rdfs:subClassOf prov:Entity, core:RepositoryEntity ;
+    rdfs:label "Commit snapshot" ;
+    rdfs:comment "A version-specific state of a logical repository entity, linked to that entity with prov:specializationOf." .
+
+core:AccountableParty a owl:Class ;
+    rdfs:subClassOf core:RepositoryEntity ;
+    rdfs:label "Accountable party" ;
+    rdfs:comment "A person or team accountable for a repository entity." .
+
+core:Owner a owl:Class ;
+    rdfs:subClassOf schema:Person, core:AccountableParty ;
+    rdfs:label "Owner" ;
+    rdfs:comment "An individual accountable for a repository entity or decision." .
+
+core:Team a owl:Class ;
+    rdfs:subClassOf schema:Organization, core:AccountableParty ;
+    rdfs:label "Team" ;
+    rdfs:comment "A group accountable for a repository entity or decision." .
+
+core:containedIn a owl:ObjectProperty ;
+    rdfs:domain core:RepositoryEntity ;
+    rdfs:range core:RepositoryEntity ;
+    rdfs:label "contained in" ;
+    rdfs:comment "Records direct structural containment, such as a file in a directory or a module in the repository." .
+
+core:defines a owl:ObjectProperty ;
+    rdfs:domain core:File ;
+    rdfs:range core:Symbol ;
+    owl:inverseOf core:definedIn ;
+    rdfs:label "defines" ;
+    rdfs:comment "Links a source file to a code symbol whose definition it contains." .
+
+core:definedIn a owl:ObjectProperty ;
+    rdfs:domain core:Symbol ;
+    rdfs:range core:File ;
+    owl:inverseOf core:defines ;
+    rdfs:label "defined in" ;
+    rdfs:comment "Links a code symbol to the source file containing its definition." .
+
+core:dependsOn a owl:ObjectProperty ;
+    rdfs:domain core:RepositoryEntity ;
+    rdfs:range core:RepositoryEntity ;
+    rdfs:label "depends on" ;
+    rdfs:comment "Records a build-time or runtime dependency between repository entities." .
+
+core:testedBy a owl:ObjectProperty ;
+    rdfs:domain core:RepositoryEntity ;
+    rdfs:range core:RepositoryEntity ;
+    rdfs:label "tested by" ;
+    rdfs:comment "Links an entity or behavior to tests that provide verification evidence." .
+
+core:ownedBy a owl:ObjectProperty ;
+    rdfs:domain core:RepositoryEntity ;
+    rdfs:range core:AccountableParty ;
+    rdfs:label "owned by" ;
+    rdfs:comment "Identifies the person or team accountable for a repository entity." .
+
+core:documentedBy a owl:ObjectProperty ;
+    rdfs:domain core:RepositoryEntity ;
+    rdfs:range rdfs:Resource ;
+    rdfs:label "documented by" ;
+    rdfs:comment "Links an entity to a specification, decision record, README, or other documentation resource." .
+
+core:path a owl:DatatypeProperty ;
+    rdfs:domain core:RepositoryEntity ;
+    rdfs:range xsd:string ;
+    rdfs:label "repository path" ;
+    rdfs:comment "Stores a repository-relative POSIX path for a file or directory." .
+
+core:commitSha a owl:DatatypeProperty ;
+    rdfs:domain core:Commit ;
+    rdfs:range xsd:string ;
+    rdfs:label "commit SHA" ;
+    rdfs:comment "Stores the version-control identifier for a commit." .
+
+core:version a owl:DatatypeProperty ;
+    rdfs:domain core:Package ;
+    rdfs:range xsd:string ;
+    rdfs:label "version" ;
+    rdfs:comment "Stores a package version or a dependency version constraint." .
+
+core:startLine a owl:DatatypeProperty ;
+    rdfs:domain core:Symbol ;
+    rdfs:range xsd:integer ;
+    rdfs:label "start line" ;
+    rdfs:comment "Identifies the first source line associated with a code symbol." .
+
+core:endLine a owl:DatatypeProperty ;
+    rdfs:domain core:Symbol ;
+    rdfs:range xsd:integer ;
+    rdfs:label "end line" ;
+    rdfs:comment "Identifies the last source line associated with a code symbol." .

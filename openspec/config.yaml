@@ -1,0 +1,23 @@
+schema: spec-driven
+context: |
+  This project is the Moxie medspa booking backend take-home exercise.
+  The selected application stack is Python, FastAPI, and PostgreSQL, with Docker Compose.
+  Follow the source exercise and user instructions; keep decisions readable and avoid scope creep.
+  The user has authorized a design-only answer to the README Scope Change Scenario; implementation of the proposed change remains out of scope.
+  Read the active OpenSpec change and the ontology README before implementation.
+rules:
+  proposal:
+    - Separate explicit source requirements from recommendations and unresolved questions.
+    - Do not implement until the user resolves the blocking questions recorded in the proposal.
+    - Keep the authorized Scope Change Scenario response design-only; do not implement its proposed changes without separate approval.
+  specs:
+    - Keep requirements traceable to the source exercise or an explicit user decision.
+    - Do not turn an assumption into a normative requirement without recording its decision and rationale.
+    - Write behavior in testable SHALL and WHEN/THEN form where it is settled.
+  design:
+    - Prefer a small, readable architecture with clear boundaries over generic frameworks or premature abstractions.
+    - Capture tradeoffs and unresolved implementation choices here before relying on them.
+  tasks:
+    - Use test-driven development: add a failing unit or integration test before implementing each behavior.
+    - Use PostgreSQL for integration coverage of database behavior.
+    - Keep agent/model roles and AI usage documentation accurate to actual work performed.

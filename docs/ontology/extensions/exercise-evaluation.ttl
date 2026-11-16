@@ -1,0 +1,288 @@
+@prefix ev: <https://moxie.example.com/ontology/medspa-booking/evaluation#> .
+@prefix core: <https://moxie.example.com/ontology/medspa-booking/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://moxie.example.com/ontology/medspa-booking/evaluation>
+    a owl:Ontology ;
+    owl:imports <https://moxie.example.com/ontology/medspa-booking/core> ;
+    rdfs:label "Exercise Requirements and Evaluation" ;
+    rdfs:comment "Models source requirements, unresolved decisions, agent runs, quality measurements, and evidence so future exercise outcomes can be evaluated without prescribing an unapproved scoring rubric or metric serialization." ;
+    owl:versionInfo "0.1.0" ;
+    dcterms:created "2026-11-15"^^xsd:date .
+
+ev:Exercise a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Exercise" ;
+    rdfs:comment "The take-home project being specified, implemented, tested, and evaluated." .
+
+ev:Requirement a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Requirement" ;
+    rdfs:comment "A statement from an authoritative exercise instruction that can be traced to implementation or evaluation evidence." .
+
+ev:HardRequirement a owl:Class ;
+    rdfs:subClassOf ev:Requirement ;
+    rdfs:label "Hard requirement" ;
+    rdfs:comment "An explicit requirement that must be met unless a higher-priority user instruction changes it." .
+
+ev:EndpointContract a owl:Class ;
+    rdfs:subClassOf ev:HardRequirement ;
+    rdfs:label "Endpoint contract" ;
+    rdfs:comment "An explicitly listed HTTP method and path whose behavior can be checked against the exercise requirements." .
+
+ev:DataModelRequirement a owl:Class ;
+    rdfs:subClassOf ev:HardRequirement ;
+    rdfs:label "Data model requirement" ;
+    rdfs:comment "A required entity field or relationship stated in the source exercise." .
+
+ev:OpenQuestion a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Open question" ;
+    rdfs:comment "A material ambiguity or unresolved choice that must remain visible until an authorized decision is recorded." .
+
+ev:DecisionRecord a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Decision record" ;
+    rdfs:comment "A documented decision, its rationale, source, and affected requirements, suitable for recording in OpenSpec." .
+
+ev:Agent a owl:Class ;
+    rdfs:subClassOf core:Owner ;
+    rdfs:label "AI agent" ;
+    rdfs:comment "An AI agent or model instance that contributes to planning, implementation, review, validation, or evaluation." .
+
+ev:AgentRun a owl:Class ;
+    rdfs:subClassOf prov:Activity ;
+    rdfs:label "Agent run" ;
+    rdfs:comment "One bounded agent execution, including its assigned phase, exact model/variant, input artifacts, outputs, and observable evidence." .
+
+ev:EvaluationRun a owl:Class ;
+    rdfs:subClassOf prov:Activity ;
+    rdfs:label "Evaluation run" ;
+    rdfs:comment "An evaluation activity that applies a documented rubric or metric definition to an agent run or project artifact." .
+
+ev:QualityDimension a owl:Class ;
+    rdfs:label "Quality dimension" ;
+    rdfs:comment "A named aspect of agent input or output quality. Its rubric and scale must be documented separately before scoring." .
+
+ev:InputQuality a ev:QualityDimension ;
+    rdfs:label "Input quality" ;
+    rdfs:comment "A quality dimension for the clarity, completeness, and relevance of an agent's supplied input." .
+
+ev:OutputQuality a ev:QualityDimension ;
+    rdfs:label "Output quality" ;
+    rdfs:comment "A quality dimension for an agent's produced result, assessed against a documented rubric and independent evidence." .
+
+ev:MetricDefinition a owl:Class ;
+    rdfs:label "Metric definition" ;
+    rdfs:comment "A versioned definition of a measurement, including its meaning, method, unit, and applicable rubric." .
+
+ev:MetricObservation a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Metric observation" ;
+    rdfs:comment "An evidence-linked observation of an agent or artifact metric. Missing values must be marked unavailable rather than fabricated." .
+
+ev:EvidenceArtifact a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Evidence artifact" ;
+    rdfs:comment "A test result, review note, command output, source file, or other artifact supporting a requirement assessment or metric." .
+
+ev:EvaluationFinding a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Evaluation finding" ;
+    rdfs:comment "A finding about requirement coverage, correctness, quality, or risk, linked to the evidence from which it was derived." .
+
+ev:hasInputArtifact a owl:ObjectProperty ;
+    rdfs:domain ev:AgentRun ;
+    rdfs:range ev:EvidenceArtifact ;
+    rdfs:label "has input artifact" ;
+    rdfs:comment "Links an agent run to the prompt, specification, context, or other input evidence it received." .
+
+ev:evaluatesAgentRun a owl:ObjectProperty ;
+    rdfs:domain ev:EvaluationRun ;
+    rdfs:range ev:AgentRun ;
+    rdfs:label "evaluates agent run" ;
+    rdfs:comment "Identifies the agent execution assessed by an evaluation activity." .
+
+ev:usesMetricDefinition a owl:ObjectProperty ;
+    rdfs:domain ev:MetricObservation ;
+    rdfs:range ev:MetricDefinition ;
+    rdfs:label "uses metric definition" ;
+    rdfs:comment "Identifies the versioned rubric or metric contract used to interpret an observation." .
+
+ev:evaluatedBy a owl:ObjectProperty ;
+    rdfs:domain ev:MetricObservation ;
+    rdfs:range ev:EvaluationRun ;
+    rdfs:label "evaluated by" ;
+    rdfs:comment "Links a metric observation to the evaluation activity that produced it." .
+
+ev:findingAbout a owl:ObjectProperty ;
+    rdfs:domain ev:EvaluationFinding ;
+    rdfs:range ev:Requirement ;
+    rdfs:label "finding about" ;
+    rdfs:comment "Links an evaluation finding to the requirement it concerns." .
+
+ev:agentVariant a owl:DatatypeProperty ;
+    rdfs:domain ev:AgentRun ;
+    rdfs:range xsd:string ;
+    rdfs:label "agent model variant" ;
+    rdfs:comment "The configured model reasoning variant, such as high or max, when one is specified." .
+
+ev:metricName a owl:DatatypeProperty ;
+    rdfs:domain ev:MetricDefinition ;
+    rdfs:range xsd:string ;
+    rdfs:label "metric name" ;
+    rdfs:comment "A stable human-readable identifier for a metric or rubric dimension." .
+
+ev:metricVersion a owl:DatatypeProperty ;
+    rdfs:domain ev:MetricDefinition ;
+    rdfs:range xsd:string ;
+    rdfs:label "metric version" ;
+    rdfs:comment "The version of the metric definition or scoring rubric used for reproducibility." .
+
+ev:metricUnavailableReason a owl:DatatypeProperty ;
+    rdfs:domain ev:MetricObservation ;
+    rdfs:range xsd:string ;
+    rdfs:label "metric unavailable reason" ;
+    rdfs:comment "Explains why an expected metric could not be collected; missing values are never silently imputed." .
+
+ev:findingText a owl:DatatypeProperty ;
+    rdfs:domain ev:EvaluationFinding ;
+    rdfs:range xsd:string ;
+    rdfs:label "finding text" ;
+    rdfs:comment "A concise evidence-grounded evaluation finding." .
+
+ev:appliesTo a owl:ObjectProperty ;
+    rdfs:domain ev:Requirement ;
+    rdfs:range ev:Exercise ;
+    rdfs:label "applies to" ;
+    rdfs:comment "Connects a source requirement to the exercise it governs." .
+
+ev:sourceReference a owl:DatatypeProperty ;
+    rdfs:domain ev:Requirement ;
+    rdfs:range xsd:string ;
+    rdfs:label "source reference" ;
+    rdfs:comment "Identifies the source document and section or line from which a requirement was derived." .
+
+ev:requirementStatement a owl:DatatypeProperty ;
+    rdfs:domain ev:Requirement ;
+    rdfs:range xsd:string ;
+    rdfs:label "requirement statement" ;
+    rdfs:comment "A concise, traceable statement of the source requirement without adding unstated policy." .
+
+ev:httpMethod a owl:DatatypeProperty ;
+    rdfs:domain ev:EndpointContract ;
+    rdfs:range xsd:string ;
+    rdfs:label "HTTP method" ;
+    rdfs:comment "The HTTP method explicitly required for an endpoint contract." .
+
+ev:httpPath a owl:DatatypeProperty ;
+    rdfs:domain ev:EndpointContract ;
+    rdfs:range xsd:string ;
+    rdfs:label "HTTP path" ;
+    rdfs:comment "The literal route path explicitly required for an endpoint contract." .
+
+ev:questionText a owl:DatatypeProperty ;
+    rdfs:domain ev:OpenQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:label "question text" ;
+    rdfs:comment "The unresolved decision stated without implying an answer." .
+
+ev:decisionState a owl:DatatypeProperty ;
+    rdfs:domain ev:OpenQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:label "decision state" ;
+    rdfs:comment "A documented state such as open, decided, or deferred; exact workflow values are project-defined." .
+
+ev:runPhase a owl:DatatypeProperty ;
+    rdfs:domain ev:AgentRun ;
+    rdfs:range xsd:string ;
+    rdfs:label "run phase" ;
+    rdfs:comment "The planned or actual phase performed by an agent, such as planning, implementation, review, validation, or evaluation." .
+
+ev:modelIdentifier a owl:DatatypeProperty ;
+    rdfs:domain ev:AgentRun ;
+    rdfs:range xsd:string ;
+    rdfs:label "model identifier" ;
+    rdfs:comment "The exact provider/model identifier used for an agent run, when observable." .
+
+ev:metricValue a owl:DatatypeProperty ;
+    rdfs:domain ev:MetricObservation ;
+    rdfs:range xsd:integer ;
+    rdfs:label "metric value" ;
+    rdfs:comment "An integer input/output quality rating from 1 through 5 when the approved rubric is applied." .
+
+ev:metricValueText a owl:DatatypeProperty ;
+    rdfs:domain ev:MetricObservation ;
+    rdfs:range xsd:string ;
+    rdfs:label "metric value text" ;
+    rdfs:comment "A non-numeric observation or explicit unavailable marker when a numeric value cannot be collected." .
+
+ev:metricUnit a owl:DatatypeProperty ;
+    rdfs:domain ev:MetricObservation ;
+    rdfs:range xsd:string ;
+    rdfs:label "metric unit" ;
+    rdfs:comment "The declared unit or scale for a metric observation, as defined by its metric contract." .
+
+ev:hasEvidence a owl:ObjectProperty ;
+    rdfs:domain prov:Entity ;
+    rdfs:range ev:EvidenceArtifact ;
+    rdfs:label "has evidence" ;
+    rdfs:comment "Links an assessment, requirement, metric, or finding to the artifact that supports it." .
+
+ev:addressesRequirement a owl:ObjectProperty ;
+    rdfs:domain ev:EvidenceArtifact ;
+    rdfs:range ev:Requirement ;
+    rdfs:label "addresses requirement" ;
+    rdfs:comment "Links evidence to the requirement it helps verify." .
+
+ev:performedBy a owl:ObjectProperty ;
+    rdfs:domain ev:AgentRun ;
+    rdfs:range ev:Agent ;
+    rdfs:label "performed by" ;
+    rdfs:comment "Identifies the agent responsible for a particular run." .
+
+ev:generatedArtifact a owl:ObjectProperty ;
+    rdfs:domain prov:Activity ;
+    rdfs:range ev:EvidenceArtifact ;
+    rdfs:label "generated artifact" ;
+    rdfs:comment "Links an agent or evaluation activity to an output artifact it produced." .
+
+ev:artifactReference a owl:DatatypeProperty ;
+    rdfs:domain ev:EvidenceArtifact ;
+    rdfs:range xsd:string ;
+    rdfs:label "artifact reference" ;
+    rdfs:comment "A repository-relative path or stable external reference to an evidence artifact." .
+
+ev:observesDimension a owl:ObjectProperty ;
+    rdfs:domain ev:MetricObservation ;
+    rdfs:range ev:QualityDimension ;
+    rdfs:label "observes dimension" ;
+    rdfs:comment "Identifies the input or output quality dimension measured by an observation." .
+
+ev:aboutAgentRun a owl:ObjectProperty ;
+    rdfs:domain ev:MetricObservation ;
+    rdfs:range ev:AgentRun ;
+    rdfs:label "about agent run" ;
+    rdfs:comment "Identifies the agent run to which a metric observation applies." .
+
+ev:derivedFrom a owl:ObjectProperty ;
+    rdfs:domain prov:Entity ;
+    rdfs:range prov:Entity ;
+    rdfs:label "derived from" ;
+    rdfs:comment "Records provenance from a source requirement, specification, decision, or evidence artifact." .
+
+ev:documentsDecision a owl:ObjectProperty ;
+    rdfs:domain ev:DecisionRecord ;
+    rdfs:range ev:OpenQuestion ;
+    rdfs:label "documents decision" ;
+    rdfs:comment "Links a decision record to the previously unresolved question it resolves." .
+
+ev:decisionRationale a owl:DatatypeProperty ;
+    rdfs:domain ev:DecisionRecord ;
+    rdfs:range xsd:string ;
+    rdfs:label "decision rationale" ;
+    rdfs:comment "Explains why an authorized decision was selected and notes relevant tradeoffs." .

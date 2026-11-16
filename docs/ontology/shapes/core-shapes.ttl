@@ -1,0 +1,54 @@
+@prefix core: <https://moxie.example.com/ontology/medspa-booking/core#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+core:RepositoryShape a sh:NodeShape ;
+    sh:targetClass core:Repository ;
+    sh:property [
+        sh:path <https://schema.org/name> ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A repository must have exactly one name." ;
+    ] .
+
+core:ModuleShape a sh:NodeShape ;
+    sh:targetClass core:Module ;
+    sh:property [
+        sh:path core:containedIn ;
+        sh:class core:Repository ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A module must be contained in exactly one repository." ;
+    ] .
+
+core:FileShape a sh:NodeShape ;
+    sh:targetClass core:File ;
+    sh:property [
+        sh:path core:path ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Every file must have exactly one repository-relative path." ;
+    ] ;
+    sh:property [
+        sh:path core:containedIn ;
+        sh:or (
+            [ sh:class core:Directory ]
+            [ sh:class core:Module ]
+            [ sh:class core:Repository ]
+        ) ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Every file must be contained in exactly one directory, module, or repository." ;
+    ] .
+
+core:CommitShape a sh:NodeShape ;
+    sh:targetClass core:Commit ;
+    sh:property [
+        sh:path core:commitSha ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Every commit must have exactly one commit SHA." ;
+    ] .
